@@ -451,7 +451,7 @@ class SiteRedirectAdminForm(RedirectAdmin.form):
     def clean_old_path(form):
         path = form.cleaned_data.get("old_path")
         try:
-            Redirect.objects.exclude(id=form.instance.id).get(old_path=path)
+            Redirect.objects.filter(site_id=current_site_id()).exclude(id=form.instance.id).get(old_path=path)
         except Redirect.DoesNotExist:
             return path
         raise ValidationError(_("A redirect from this path already exists"))
