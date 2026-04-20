@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import include
+from django.urls import include
 from django.contrib.admin.sites import AdminSite, AlreadyRegistered, NotRegistered
 from django.contrib.admin.sites import site as default_site
 from django.contrib.auth import get_user_model
@@ -74,10 +74,15 @@ class LazyAdminSite(AdminSite):
                 # highlight its left-hand admin nav item.
                 re_path(
                     r"^media-library/$",
-                    lambda r: redirect("fb_browse"),
+                    lambda r: redirect("filebrowser:fb_browse"),
                     name="media-library",
                 ),
-                re_path(r"^media-library/", include(fb_urls)),
+                re_path(
+                    r"^media-library/",
+                    include((fb_urls[0], fb_urls[1]), namespace=fb_urls[2])
+                    if isinstance(fb_urls, tuple) and len(fb_urls) == 3
+                    else include(fb_urls),
+                ),
             ]
 
         # Give the urlpattern for the user password change view an
