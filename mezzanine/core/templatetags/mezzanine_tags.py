@@ -9,6 +9,7 @@ except ImportError:
 from django.apps import apps
 from django.contrib import admin
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.middleware.csrf import get_token
 from django.contrib.sites.models import Site
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files import File
@@ -475,6 +476,7 @@ def editable_loader(context):
             "editable_obj", context.get("page", None)
         )
         template_vars["accounts_logout_url"] = context.get("accounts_logout_url", None)
+        template_vars["csrf_token"] = get_token(context["request"])
         template_vars["toolbar"] = t.render(template_vars)
         template_vars["richtext_media"] = RichTextField().formfield().widget.media
     return template_vars
