@@ -57,7 +57,12 @@ class MenusField(MultiChoiceField):
             return self._choices
         else:
             menus = getattr(settings, "PAGE_MENU_TEMPLATES", [])
-            return (m[:2] for m in menus)
+            # Materialise as a tuple so the value is stable across calls.
+            # A bare generator literal here returns a fresh generator object every
+            # time, which Django's migration autodetector compares as not-equal
+            # against the recorded migration choices, producing eternal drift on
+            # `makemigrations --check`.
+            return tuple((m[:2] for m in menus))
 
     def _set_choices(self, choices):
         self._choices = choices
